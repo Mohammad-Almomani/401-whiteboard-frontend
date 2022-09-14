@@ -11,7 +11,7 @@ export default function AddCommentForm(props) {
       postID: props.postID,
     };
 
-    await axios.post(`${process.env.REACT_APP_DATABASE_URL}/comment`, comment);
+    await axios.post(`${process.env.REACT_APP_BACKEND}/comment`, comment);
     props.gitPosts();
   };
 

@@ -10,7 +10,7 @@ export default function addPostForm(props) {
       content: e.target.content.value,
     };
 
-    await axios.post(`${process.env.REACT_APP_DATABASE_URL}/post`, post);
+    await axios.post(`${process.env.REACT_APP_BACKEND}/post`, post);
     props.gitPosts();
   };
 
