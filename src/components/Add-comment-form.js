@@ -24,7 +24,7 @@ export default function AddCommentForm(props) {
      
     </Form.Group> */}
         <Form.Group className="mb-3">
-          <Form.Label>Type here</Form.Label>
+          {/* <Form.Label>Type here</Form.Label> */}
           <Form.Control type="text" id="content" rows={3} />
         </Form.Group>
         <Button variant="primary" type="submit">
