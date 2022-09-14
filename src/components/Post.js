@@ -11,12 +11,12 @@ export default function Post() {
 
   const gitPosts = async () => {
     const allPosts = await axios.get(
-      `${process.env.REACT_APP_DATABASE_URL}/post`
+      `${process.env.REACT_APP_BACKEND}/post`
     );
     setPost(allPosts.data);
   };
   const handleDelete = async (id) => {
-    await axios.delete(`${process.env.REACT_APP_DATABASE_URL}/post/${id}`);
+    await axios.delete(`${process.env.REACT_APP_BACKEND}/post/${id}`);
     gitPosts();
   };
 
