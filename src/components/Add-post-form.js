@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
-import { Button, Form } from "react-bootstrap";
+import { Button, TextField } from "@mui/material";
+import { Form } from "react-bootstrap";
 
 export default function addPostForm(props) {
   const addPost = async (e) => {
@@ -16,22 +17,32 @@ export default function addPostForm(props) {
 
   return (
     <div>
-      <Form onSubmit={addPost} style={{ margin: "10px 50px" }}>
-        <Form.Group className="mb-3">
-          <Form.Label>Post Title</Form.Label>
-          <Form.Control
-            id="title"
-            type="text"
-            placeholder="Example: Motivational Quote"
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Type here</Form.Label>
-          <Form.Control type="text" id="content" as="textarea" rows={3} />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          {" "}
-          Submit{" "}
+      <Form onSubmit={addPost} style={{ margin: "3% 30%" }}>
+        <h3>Create Post</h3>
+
+        <TextField
+          margin="normal"
+          fullWidth
+          id="title"
+          label="Example: Motivational Quote"
+          type="text"
+          name="title"
+          rows={3}
+          required
+        />
+
+        <TextField
+          margin="normal"
+          fullWidth
+          name="content"
+          label="Type here"
+          type="text"
+          id="content"
+          rows={3}
+        />
+
+        <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
+          Submit
         </Button>
       </Form>
     </div>

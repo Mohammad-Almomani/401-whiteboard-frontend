@@ -1,6 +1,8 @@
 import React from "react";
 import axios from "axios";
-import { Button, Form } from "react-bootstrap";
+import {  Form } from "react-bootstrap";
+import Button from "@mui/material/Button";
+import { TextField } from "@mui/material";
 
 export default function AddCommentForm(props) {
   const addComment = async (e) => {
@@ -25,9 +27,21 @@ export default function AddCommentForm(props) {
     </Form.Group> */}
         <Form.Group className="mb-3">
           {/* <Form.Label>Type here</Form.Label> */}
-          <Form.Control type="text" id="content" rows={3} />
+          <TextField  
+          margin="normal"
+          fullWidth
+          id="content"
+          label="add comment"
+          name="email"
+          type="text"
+          autoFocus
+          />
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button
+          type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}>
           {" "}
           Add comment{" "}
         </Button>
