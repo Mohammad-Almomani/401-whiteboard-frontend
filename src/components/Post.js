@@ -1,18 +1,29 @@
+import * as React from "react";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import CardMedia from "@mui/material/CardMedia";
+import CardContent from "@mui/material/CardContent";
+import CardActions from "@mui/material/CardActions";
+import Collapse from "@mui/material/Collapse";
+import Avatar from "@mui/material/Avatar";
+import Typography from "@mui/material/Typography";
+import { red } from "@mui/material/colors";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useState } from "react";
 import axios from "axios";
-import React from "react";
-import { useState, useEffect } from "react";
-import { Button, Col, Row } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
 import AddCommentForm from "./Add-comment-form";
+import { Col, Dropdown, Row } from "react-bootstrap";
+import { Button } from "@mui/material";
+import image from "./img.jpg";
 import AddPostForm from "./Add-post-form";
 
-export default function Post() {
+export default function RecipeReviewCard(props) {
+  const [expanded, setExpanded] = useState(true);
+
   const [post, setPost] = useState(null);
 
   const gitPosts = async () => {
-    const allPosts = await axios.get(
-      `${process.env.REACT_APP_BACKEND}/post`
-    );
+    const allPosts = await axios.get(`${process.env.REACT_APP_BACKEND}/post`);
     setPost(allPosts.data);
   };
   const handleDelete = async (id) => {
@@ -20,60 +31,107 @@ export default function Post() {
     gitPosts();
   };
 
-  useEffect(() => {
+  const handleSignOut = () => {
+    props.checkIfAuthorized(false);
+  };
+
+  React.useEffect(() => {
     gitPosts();
   }, []);
 
   return (
-    <div>
+    <>
+      <div className="header">
+        <Button
+          variant="contained"
+          sx={{ mt: 3, mb: 2 }}
+          onClick={handleSignOut}
+        >
+          Sign Out
+        </Button>
+      </div>
       <AddPostForm gitPosts={gitPosts} />
-      <Row style={{ marginLeft: "7.5%" }} xs={1} sm={3} md={4} className="g-4">
-        {/* <Row xs={1} sm={2} md={3} className="g-4"> */}
+
+      <Row style={{ marginLeft: "7.5%" }} xs={1} sm={2} md={3} className="g-4">
         {post &&
           post.map((pos, idx) => {
             return (
               <Col key={idx}>
-                <Card style={{ width: "18rem" }}>
-                  {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
-                  <Card.Body>
-                    <Card.Title>{pos.title}</Card.Title>
-                    <Card.Text>{pos.content}</Card.Text>
-                    {/* <Card.Text> */}
-                    {pos.Comments && (
+                <Card sx={{ maxWidth: 400 }}>
+                  <CardHeader
+                    avatar={
+                      <Avatar sx={{ bgcolor: red[500] }} aria-label="post">
+                        {pos.title.charAt(0).toUpperCase() || "P"}
+                      </Avatar>
+                    }
+                    action={
                       <>
-                        {pos.Comments.map((com, idxc) => {
-                          return <p key={idxc}>{com.comment}</p>;
-                        })}
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            style={{
+                              backgroundColor: "white",
+                              borderColor: "white",
+                              padding: "0px",
+                            }}
+                          >
+                            <MoreVertIcon
+                              style={{
+                                backgroundColor: "gray",
+                                borderRadius: "20px",
+                              }}
+                            />
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu
+                            style={{ backgroundColor: "lightblue" }}
+                          >
+                            <Dropdown.Item onClick={() => handleDelete(pos.id)}>
+                              Delete Post
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
                       </>
-                    )}
+                    }
+                    title={pos.title}
+                  />
+                  <CardMedia
+                    component="img"
+                    height="194"
+                    image={image}
+                    alt="Paella dish"
+                  />
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary">
+                      {pos.content}
+                    </Typography>
+                  </CardContent>
+                  <CardActions disableSpacing></CardActions>
+                  <Collapse in={expanded} timeout="auto" unmountOnExit>
+                    <CardContent>
+                      <Typography style={{ fontWeight: "bolder" }} paragraph>
+                        Comments:
+                      </Typography>
+                      {pos.Comments && (
+                        <Typography key={idx} paragraph>
+                          {pos.Comments.map((com) => (
+                            <a style={{ display: "block" }} key={com.id}>
+                              {com.comment}
+                            </a>
+                          ))}
+                        </Typography>
+                      )}
 
-                    {/* </Card.Text> */}
-                    <AddCommentForm postID={pos.id} gitPosts={gitPosts} />
-                    <Button
-                      onClick={() => handleDelete(pos.id)}
-                      variant="primary"
-                    >
-                      Delete Post
-                    </Button>
-                  </Card.Body>
+                      <AddCommentForm postID={pos.id} gitPosts={gitPosts} />
+                    </CardContent>
+                  </Collapse>
                 </Card>
               </Col>
             );
           })}
       </Row>
-    </div>
+      <a style={{ display: "block", marginTop: "2%" }}>
+        You are done here? don't forget to
+        {<Button onClick={handleSignOut}>Sign Out</Button>}
+      </a>
+    </>
   );
 }
-
-// <h1>{p.title}</h1>
-// <p>{p.content}</p>
-// <p>{p.Comments && p.Comments.map((com, idxc) => {
-//     return (
-//         <div key={idxc}>
-//             <p>{com.comment}</p>
-//             <p>{com.commentAuthor}</p>
-//         </div>
-//     )
-// })}</p>
-// <button onClick={() => handleDelete(p.id)}>Delete</button>
-// <AddCommentForm postID={p.id} gitPosts={gitPosts} />

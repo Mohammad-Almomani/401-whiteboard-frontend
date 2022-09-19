@@ -36,3 +36,26 @@
     transform: rotate(360deg);
   }
 }
+
+.container {
+  padding-bottom: 70px;
+  padding-top: 20px;
+}
+
+.email-input {
+  width: 300px;
+  padding: 5px 10px;
+}
+
+.message {
+  font-size: 15px;
+  text-align: left;
+}
+
+.success {
+  color: blue;
+}
+
+.error {
+  color: red;
+}
