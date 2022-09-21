@@ -9,21 +9,27 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import AddCommentForm from "./Add-comment-form";
 import { Col, Dropdown, Row } from "react-bootstrap";
 import { Button } from "@mui/material";
 import image from "./img.jpg";
 import AddPostForm from "./Add-post-form";
+import cookies from "react-cookies";
 
 export default function RecipeReviewCard(props) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, ] = useState(true);
 
   const [post, setPost] = useState(null);
 
   const gitPosts = async () => {
-    const allPosts = await axios.get(`${process.env.REACT_APP_BACKEND}/post`);
+    const allPosts = await axios.get(`${process.env.REACT_APP_BACKEND}/post`, {
+      headers: {
+        Authorization: `Bearer ${cookies.load("token")}`,
+      },
+    });
+
     setPost(allPosts.data);
   };
   const handleDelete = async (id) => {
@@ -32,16 +38,28 @@ export default function RecipeReviewCard(props) {
   };
 
   const handleSignOut = () => {
+    cookies.remove("token");
+    cookies.remove("userID");
+    cookies.remove("username");
     props.checkIfAuthorized(false);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     gitPosts();
   }, []);
 
   return (
     <>
-      <div className="header">
+      <div
+        className="header"
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: "2%",
+        }}
+      >
+        <a>Hello, {cookies.load("username").toUpperCase()}</a>
         <Button
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
@@ -110,11 +128,11 @@ export default function RecipeReviewCard(props) {
                       <Typography style={{ fontWeight: "bolder" }} paragraph>
                         Comments:
                       </Typography>
-                      {pos.Comments && (
+                      {pos.CommentWithUserIds && (
                         <Typography key={idx} paragraph>
-                          {pos.Comments.map((com) => (
+                          {pos.CommentWithUserIds.map((com) => (
                             <a style={{ display: "block" }} key={com.id}>
-                              {com.comment}
+                             {com.commentAuthor.toUpperCase()}: {com.comment}
                             </a>
                           ))}
                         </Typography>

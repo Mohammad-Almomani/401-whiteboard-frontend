@@ -16,6 +16,7 @@ import axios from "axios";
 import base64 from "base-64";
 import { useState } from "react";
 import { Alert } from "react-bootstrap";
+import cookies from 'react-cookies';
 
 
 const theme = createTheme();
@@ -38,7 +39,7 @@ export default function MaterialSignIn(props) {
    return setContactAdmin(!contactAdmin);
   };
 
-  const handleLogIn = async (e) => {
+  const handleLogIn =  (e) => {
     e.preventDefault();
     const filledData = new FormData(e.currentTarget);
     setNotAuthed(false)
@@ -56,7 +57,7 @@ export default function MaterialSignIn(props) {
     const encodedCredintial = base64.encode(
         `${data.username}:${data.password}`
         );
-   await axios.post(
+   axios.post(
         `${process.env.REACT_APP_BACKEND}/signin`,
         {},
         {
@@ -66,6 +67,10 @@ export default function MaterialSignIn(props) {
         }
       )
       .then((res) => {
+        console.log(res.data.user);
+        cookies.save('token', res.data.token);
+        cookies.save('userID', res.data.user._id);
+        cookies.save('username', res.data.user.username)
         props.checkIfAuthorized(true);
       })
       .catch((err) => setNotAuthed(true));

@@ -7,18 +7,20 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-ro
 import "bootstrap/dist/css/bootstrap.min.css";
 import Post from "./components/Post";
 import Copyright from "./components/CopyRight";
+import cookies from 'react-cookies';
 
 function App() {
   let [isAuthorized, setIsAuthorized] = useState(false);
 
   const checkIfAuthorized = (bool) => {
-    localStorage.setItem( 'islooged', bool);
+    // localStorage.setItem( 'islooged', bool);
     setIsAuthorized(bool);
   };
 
   useEffect(() => {
-    if (localStorage.getItem('islooged') === 'true') {
-      setIsAuthorized(true);
+    const token = cookies.load('token');
+    if(token) {
+      setIsAuthorized(true)
     }
   }, []);
 

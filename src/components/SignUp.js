@@ -5,7 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -15,6 +15,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import axios from "axios";
 import { Alert } from "react-bootstrap";
+import base64 from "base-64";
+import cookies from 'react-cookies';
+
 
 const theme = createTheme();
 
@@ -27,7 +30,7 @@ export default function SignUp(props) {
   const [isValid, setIsValid] = useState(false);
   const [message, setMessage] = useState("");
 
-  const signUp = async (e) => {
+  const signUp =  (e) => {
     e.preventDefault();
     const filledData = new FormData(e.currentTarget);
     setNotFilled(false);
@@ -49,20 +52,43 @@ export default function SignUp(props) {
     }
     setNotMatched(false);
 
-    if (isValid){
+    if (isValid) {
+      const data = {
+        username: filledData.get("username"),
+        email: filledData.get("email"),
+        password: filledData.get("password"),
+      };
 
-    const data = {
-      username: filledData.get("username"),
-      email: filledData.get("email"),
-      password: filledData.get("password"),
-    };
-
-    await axios
-      .post(`${process.env.REACT_APP_BACKEND}/signup`, data)
-      .then((res) => {
-        props.checkIfAuthorized(true);
-      })
-      .catch((e) => setAlreadyExist(true));
+       axios
+        .post(`${process.env.REACT_APP_BACKEND}/signup`, data)
+        .then( (res) => {
+          const data = {
+            username: filledData.get("email"),
+            password: filledData.get("password"),
+          };
+          const encodedCredintial = base64.encode(
+            `${data.username}:${data.password}`
+          );
+           axios
+            .post(
+              `${process.env.REACT_APP_BACKEND}/signin`,
+              {},
+              {
+                headers: {
+                  Authorization: `Basic ${encodedCredintial}`,
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res.data.user);
+              cookies.save("token", res.data.token);
+              cookies.save("userID", res.data.user._id);
+              cookies.save("username", res.data.user.username);
+              props.checkIfAuthorized(true);
+            })
+            .catch((err) => console.log(err));
+        })
+        .catch((e) => setAlreadyExist(true));
     }
   };
 
@@ -72,7 +98,6 @@ export default function SignUp(props) {
       return;
     }
     setPasswordType("password");
-  
   };
   const emailRegex = /\S+@\S+\.\S+/;
   const validateEmail = (event) => {
