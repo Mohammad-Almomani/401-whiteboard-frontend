@@ -15,7 +15,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import axios from "axios";
 import { Alert } from "react-bootstrap";
-import base64 from "base-64";
 import cookies from 'react-cookies';
 
 
@@ -62,32 +61,12 @@ export default function SignUp(props) {
        axios
         .post(`${process.env.REACT_APP_BACKEND}/signup`, data)
         .then( (res) => {
-          const data = {
-            username: filledData.get("email"),
-            password: filledData.get("password"),
-          };
-          const encodedCredintial = base64.encode(
-            `${data.username}:${data.password}`
-          );
-           axios
-            .post(
-              `${process.env.REACT_APP_BACKEND}/signin`,
-              {},
-              {
-                headers: {
-                  Authorization: `Basic ${encodedCredintial}`,
-                },
-              }
-            )
-            .then((res) => {
               console.log(res.data.user);
               cookies.save("token", res.data.token);
-              cookies.save("userID", res.data.user._id);
-              cookies.save("username", res.data.user.username);
+              cookies.save("userID", res.data.id);
+              cookies.save("username", res.data.username);
               props.checkIfAuthorized(true);
             })
-            .catch((err) => console.log(err));
-        })
         .catch((e) => setAlreadyExist(true));
     }
   };

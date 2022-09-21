@@ -14,9 +14,13 @@ export default function AddCommentForm(props) {
       userID: cookies.load("userID"),
       commentAuthor: cookies.load("username"),
     };
-
-    await axios.post(`${process.env.REACT_APP_BACKEND}/comment`, comment);
+    try {
+    const qq = await axios.post(`${process.env.REACT_APP_BACKEND}/comment`, comment)
+    console.log(qq.data)
     props.gitPosts();
+  } catch (error) {
+    console.log(error);
+  }
   };
 
   return (
