@@ -3,14 +3,16 @@ import axios from "axios";
 import {  Form } from "react-bootstrap";
 import Button from "@mui/material/Button";
 import { TextField } from "@mui/material";
+import cookies from "react-cookies";
 
 export default function AddCommentForm(props) {
   const addComment = async (e) => {
     e.preventDefault();
     const comment = {
       comment: e.target.content.value,
-      // commentAuthor: e.target.commentAuthor.value,
       postID: props.postID,
+      userID: cookies.load("userID"),
+      commentAuthor: cookies.load("username"),
     };
 
     await axios.post(`${process.env.REACT_APP_BACKEND}/comment`, comment);
