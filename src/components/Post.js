@@ -71,6 +71,7 @@ export default function RecipeReviewCard(props) {
       <AddPostForm gitPosts={gitPosts} />
 
       <Row style={{ marginLeft: "7.5%" }} xs={1} sm={2} md={3} className="g-4">
+       { console.log(post)}
         {post &&
           post.map((pos, idx) => {
             return (
@@ -110,7 +111,8 @@ export default function RecipeReviewCard(props) {
                       </>
                     }
                     title={pos.title}
-                  />
+                    />
+                    By {pos.username}
                   <CardMedia
                     component="img"
                     height="194"
@@ -128,9 +130,9 @@ export default function RecipeReviewCard(props) {
                       <Typography style={{ fontWeight: "bolder" }} paragraph>
                         Comments:
                       </Typography>
-                      {pos.CommentWithUserIds && (
+                      {pos.usersComments && (
                         <Typography key={idx} paragraph>
-                          {pos.CommentWithUserIds.map((com) => (
+                          {pos.usersComments.map((com) => (
                             <a style={{ display: "block" }} key={com.id}>
                              {com.commentAuthor.toUpperCase()}: {com.comment}
                             </a>

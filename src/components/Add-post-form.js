@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { Button, TextField } from "@mui/material";
 import { Form } from "react-bootstrap";
+import cookies from "react-cookies";
 
 export default function addPostForm(props) {
   const addPost = async (e) => {
@@ -9,6 +10,8 @@ export default function addPostForm(props) {
     const post = {
       title: e.target.title.value,
       content: e.target.content.value,
+      username: cookies.load("username"),
+      userID: cookies.load("userID"),
     };
 
     await axios.post(`${process.env.REACT_APP_BACKEND}/post`, post);
