@@ -20,8 +20,8 @@ const editPost = async (e) => {
   console.log('id',id);
   e.preventDefault();
   const post = {
-    title: e.target.title.value,
-    content: e.target.content.value,
+    title: e.target.title.value || props.title,
+    content: e.target.content.value || props.content,
     username: cookies.load("username"),
     userID: cookies.load("userID"),
   };
