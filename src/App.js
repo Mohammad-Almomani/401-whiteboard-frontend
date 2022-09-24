@@ -8,6 +8,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Post from "./components/Post";
 import Copyright from "./components/CopyRight";
 import cookies from 'react-cookies';
+import EditPost from "./components/edit-post";
+import MenuAppBar from "./components/newNav";
 
 function App() {
   let [isAuthorized, setIsAuthorized] = useState(false);
@@ -28,11 +30,13 @@ function App() {
   return (
     <div className="App">
         <>
-        {console.log("Hello User")}
-          {console.log("The login status is saved in the local storage, you can't access the posts page without login, and you cant access the login or sign up pages if you are already logged in")}
-          <Router>
+        {/* {console.log("Hello User")}
+          {console.log("The login status is saved in the local storage, you can't access the posts page without login, and you cant access the login or sign up pages if you are already logged in")} */}
+           <Router>
+            <MenuAppBar isAuthorized={isAuthorized}  checkIfAuthorized={checkIfAuthorized} />
             <Routes>
               <Route path="/signup/*" element={isAuthorized ?<Navigate to="/post" /> :<SignUp checkIfAuthorized={checkIfAuthorized} /> } />
+              <Route path="/edit/:id" element={isAuthorized ? <EditPost  /> :  <Navigate to="/signin" />} />
               <Route path="/post/*" element={isAuthorized ? <Post checkIfAuthorized={checkIfAuthorized} /> :  <Navigate to="/signin" />} />
               <Route path="/signin/*" element={isAuthorized ? <Navigate to="/Post" /> : <SignIn checkIfAuthorized={checkIfAuthorized} />} />
               <Route path="/*" element={isAuthorized ? <Post checkIfAuthorized={checkIfAuthorized} /> : <Navigate to="/signin" /> }/>

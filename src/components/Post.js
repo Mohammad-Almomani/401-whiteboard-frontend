@@ -14,9 +14,11 @@ import axios from "axios";
 import AddCommentForm from "./Add-comment-form";
 import { Col, Dropdown, Row } from "react-bootstrap";
 import { Button } from "@mui/material";
-import image from "./img.jpg";
+import image from "./assets/img.jpg";
 import AddPostForm from "./Add-post-form";
 import cookies from "react-cookies";
+import { Link, Navigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function RecipeReviewCard(props) {
   const [expanded, ] = useState(true);
@@ -33,8 +35,26 @@ export default function RecipeReviewCard(props) {
     setPost(allPosts.data);
   };
   const handleDelete = async (id) => {
-    await axios.delete(`${process.env.REACT_APP_BACKEND}/post/${id}`);
-    gitPosts();
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async(result) => {
+      if (result.isConfirmed) {
+        await axios.delete(`${process.env.REACT_APP_BACKEND}/post/${id}`);
+        gitPosts();
+        Swal.fire(
+          'Deleted!',
+          'Your file has been deleted.',
+          'success'
+        )
+      }
+    })
   };
 
   const handleSignOut = () => {
@@ -44,34 +64,18 @@ export default function RecipeReviewCard(props) {
     props.checkIfAuthorized(false);
   };
 
+
+
   useEffect(() => {
     gitPosts();
   }, []);
 
   return (
     <>
-      <div
-        className="header"
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "2%",
-        }}
-      >
-        <a>Hello, {cookies.load("username").toUpperCase()}</a>
-        <Button
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-          onClick={handleSignOut}
-        >
-          Sign Out
-        </Button>
-      </div>
+      
       <AddPostForm gitPosts={gitPosts} />
 
       <Row style={{ marginLeft: "7.5%" }} xs={1} sm={2} md={3} className="g-4">
-       { console.log(post)}
         {post &&
           post.map((pos, idx) => {
             return (
@@ -101,11 +105,14 @@ export default function RecipeReviewCard(props) {
                             />
                           </Dropdown.Toggle>
                           <Dropdown.Menu
-                            style={{ backgroundColor: "lightblue" }}
+                            style={{ backgroundColor: "lightblue" }} 
                           >
                             <Dropdown.Item onClick={() => handleDelete(pos.id)}>
                               Delete Post
                             </Dropdown.Item>
+                            <Dropdown.Item as={Link} to={`/edit/${pos.id}`}>
+                            Edit Post 
+                            </Dropdown.Item>  
                           </Dropdown.Menu>
                         </Dropdown>
                       </>

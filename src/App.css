@@ -59,6 +59,22 @@
 .error {
   color: red;
 }
+
+.link {
+  text-decoration: none;
+  color: black;
+  font-size: 1.5rem;
+}
+
+.navLink{
+/* color: white !important; */
+}
+.navLink:hover{
+color: #08586e !important;
+}
+
+
+
 /* 
 .header {
   display: "flex" !important;
