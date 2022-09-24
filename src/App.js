@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { Tab, Tabs } from "react-bootstrap";
 import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Post from "./components/Post";
+import Post from "./components/post";
 import Copyright from "./components/CopyRight";
 import cookies from 'react-cookies';
 import EditPost from "./components/edit-post";
-import MenuAppBar from "./components/newNav";
+import MenuAppBar from "./components/navbar";
 
 function App() {
   let [isAuthorized, setIsAuthorized] = useState(false);
@@ -30,8 +30,6 @@ function App() {
   return (
     <div className="App">
         <>
-        {/* {console.log("Hello User")}
-          {console.log("The login status is saved in the local storage, you can't access the posts page without login, and you cant access the login or sign up pages if you are already logged in")} */}
            <Router>
             <MenuAppBar isAuthorized={isAuthorized}  checkIfAuthorized={checkIfAuthorized} />
             <Routes>
@@ -42,29 +40,6 @@ function App() {
               <Route path="/*" element={isAuthorized ? <Post checkIfAuthorized={checkIfAuthorized} /> : <Navigate to="/signin" /> }/>
 
             </Routes>
-
-{/* 
-          <Tabs
-            
-            id="uncontrolled-tab-example"
-            className="mb-3"
-          >
-            <Tab eventKey="card" title="Posts">
-              <Post checkIfAuthorized={setIsAuthorized} />
-            </Tab>
-            <Tab eventKey="home" title="LogIn">
-              {!isAuthorized && (
-                <SignIn checkIfAuthorized={checkIfAuthorized} />
-              )}
-                {isAuthorized && (
-                  <Post checkIfAuthorized={checkIfAuthorized} />
-                  )}
-            </Tab>
-            <Tab eventKey="profile" title="SignUp">
-              <SignUp checkIfAuthorized={checkIfAuthorized} />
-            </Tab>
-          </Tabs>  */}
-
         <Copyright sx={{ mt: 8, mb: 4 }}/>
           </Router>
         </>

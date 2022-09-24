@@ -112,18 +112,6 @@ function Navbar(props) {
               
             </Box>
           )}
-          {/*         
-              <ListItem disablePadding>
-            <ListItemButton sx={{ textAlign: 'center' }}>
-              <ListItemText primary={`Hello, ${cookies.load("username").toUpperCase()}`} />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <ListItemButton sx={{ textAlign: 'center' }}>
-              <ListItemText primary='sss' />
-            </ListItemButton>
-          </ListItem> */}
         </Toolbar>
       </AppBar>
       <Box component="nav">
