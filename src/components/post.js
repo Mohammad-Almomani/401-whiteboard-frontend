@@ -59,6 +59,7 @@ export default function Newposts(props) {
                   usersComments={pos.usersComments}
                   title={pos.title}
                   gitPosts={gitPosts}
+                  imgURL={pos.imgURL}
                 />
               </Col>
             );

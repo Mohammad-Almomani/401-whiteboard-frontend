@@ -49,7 +49,7 @@ export default function ModalFather(props) {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          await axios.delete(`${process.env.REACT_APP_BACKEND}/post/${id}`, 
+          await axios.delete(`${process.env.REACT_APP_BACKEND}/post/${id}`,
           {
             headers: {
               Authorization: `Bearer ${cookies.load("token")}`,
@@ -126,8 +126,8 @@ By {props.username}
 <CardMedia
   component="img"
   height="194"
-  image={image}
-  alt="Paella dish"
+  image={props.imgURL?.match(/\.(jpeg|jpg|gif|png)$/)? props.imgURL :image}
+  alt={`image of ${props.title}`}
 />
 <CardContent>
   <Typography variant="body2" color="text.secondary">
