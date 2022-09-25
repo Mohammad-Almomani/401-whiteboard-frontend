@@ -26,14 +26,25 @@ const editPost = async (e) => {
     userID: cookies.load("userID"),
   };
 
-  await axios.put(`${process.env.REACT_APP_BACKEND}/post/${id}`, post);
-  Swal.fire(
-    "Post Updated Successfully!",
-    "",
-    "success"
-  );
-  e.target.reset();
-  props.gitPosts();
+  await axios.put(`${process.env.REACT_APP_BACKEND}/post/${id}`, post, {
+    headers: {
+      Authorization: `Bearer ${cookies.load("token")}`,
+    },
+  }).then(res => {
+    Swal.fire(
+      "Post Updated Successfully!",
+      "",
+      "success"
+    );
+    e.target.reset();
+    props.gitPosts();
+  }).catch(err => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Oops, seems like you are not authorized!',
+      text: 'Something went wrong!, Please Contact Admin'
+        })
+   })
 
 };
 

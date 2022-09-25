@@ -14,9 +14,10 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useState } from "react";
 import axios from "axios";
-import { Alert } from "react-bootstrap";
-import cookies from 'react-cookies';
-
+import { Alert, Dropdown } from "react-bootstrap";
+import cookies from "react-cookies";
+import { ArrowDropDown } from "@mui/icons-material";
+import { InputLabel, MenuItem, Select } from "@mui/material";
 
 const theme = createTheme();
 
@@ -29,7 +30,13 @@ export default function SignUp(props) {
   const [isValid, setIsValid] = useState(false);
   const [message, setMessage] = useState("");
 
-  const signUp =  (e) => {
+  const [role, setRole] = useState("user");
+
+  const handleRoleChange = (event) => {
+    setRole(event.target.value);
+  };
+
+  const signUp = (e) => {
     e.preventDefault();
     const filledData = new FormData(e.currentTarget);
     setNotFilled(false);
@@ -56,17 +63,19 @@ export default function SignUp(props) {
         username: filledData.get("username"),
         email: filledData.get("email"),
         password: filledData.get("password"),
+        role: role,
       };
-
-       axios
+      console.log(data);
+      axios
         .post(`${process.env.REACT_APP_BACKEND}/signup`, data)
-        .then( (res) => {
-              console.log(res.data.user);
-              cookies.save("token", res.data.token);
-              cookies.save("userID", res.data.id);
-              cookies.save("username", res.data.username);
-              props.checkIfAuthorized(true);
-            })
+        .then((res) => {
+          console.log(res.data.user);
+          cookies.save("token", res.data.token);
+          cookies.save("role", res.data.role);
+          cookies.save("userID", res.data.id);
+          cookies.save("username", res.data.username);
+          props.checkIfAuthorized(true);
+        })
         .catch((e) => setAlreadyExist(true));
     }
   };
@@ -158,6 +167,19 @@ export default function SignUp(props) {
                   id="confirmPassword"
                   autoComplete="new-password"
                 />
+              </Grid>
+              <Grid item xs={12}>
+                <InputLabel id="demo-simple-select-label">Please Pick Your Role</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={role}
+                  label="Role"
+                  onChange={handleRoleChange}
+                >
+                  <MenuItem value="user" defaultChecked>User</MenuItem>
+                  <MenuItem value="admin">Admin</MenuItem>
+                </Select>
               </Grid>
               <Grid item xs={12}>
                 {notFilled && (

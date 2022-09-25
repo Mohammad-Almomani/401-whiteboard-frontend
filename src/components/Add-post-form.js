@@ -3,21 +3,46 @@ import axios from "axios";
 import { Button, TextField } from "@mui/material";
 import { Form } from "react-bootstrap";
 import cookies from "react-cookies";
+import Swal from "sweetalert2";
 
 export default function addPostForm(props) {
   const addPost = async (e) => {
     e.preventDefault();
+    console.log(e.target.imgURL.value);
     const post = {
       title: e.target.title.value,
       content: e.target.content.value,
+      imgURL: e.target.imgURL.value,
       username: cookies.load("username"),
       userID: cookies.load("userID"),
     };
 
-    await axios.post(`${process.env.REACT_APP_BACKEND}/post`, post);
-    e.target.reset();
-    props.gitPosts();
-  };
+    await axios.post(`${process.env.REACT_APP_BACKEND}/post`, post, {
+      headers: {
+        Authorization: `Bearer ${cookies.load("token")}`,
+      },
+    }).then(res => {
+      console.log(res);
+
+      Swal.fire({
+        position: 'center',
+        icon: 'success',
+        title: 'Your Posted Successfully',
+        showConfirmButton: false,
+        timer: 1500
+      })
+      e.target.reset();
+      props.gitPosts();
+
+    }).catch(err => {
+      console.log(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops, seems like you are not authorized!',
+        text: 'Something went wrong!, Please Contact Admin'
+          })
+    })
+  }
 
   return (
     <div>
@@ -42,6 +67,16 @@ export default function addPostForm(props) {
           label="Type here"
           type="text"
           id="content"
+          rows={3}
+        />
+
+    <TextField
+          margin="normal"
+          fullWidth
+          name="imgURL"
+          label="Enter Image URL here (Optional)"
+          type="url"
+          id="imgURL"
           rows={3}
         />
 

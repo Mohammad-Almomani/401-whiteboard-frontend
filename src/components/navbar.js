@@ -29,6 +29,7 @@ function Navbar(props) {
     cookies.remove("token");
     cookies.remove("userID");
     cookies.remove("username");
+    cookies.remove("role");
     props.checkIfAuthorized(false);
   };
 
