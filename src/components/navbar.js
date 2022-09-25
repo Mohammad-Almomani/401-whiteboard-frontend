@@ -6,8 +6,6 @@ import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
@@ -18,7 +16,6 @@ import { Link } from "react-router-dom";
 import logo from "./assets/logo-re.png";
 
 const drawerWidth = 240;
-const navItems = ["Home", "About", "Contact"];
 
 function Navbar(props) {
   const { window } = props;
@@ -38,18 +35,41 @@ function Navbar(props) {
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }}>
-        MUI
+        Facebook Ultra Lite
+        {<img src={logo} style={{ width: "75px" }} />}
       </Typography>
       <Divider />
-      <List>
-        {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+
+      {props.isAuthorized && (
+        <List>
+          <ListItemText
+            primary={`Hello, ${cookies.load("username").toUpperCase()}`}
+          />
+
+          <Button
+            sx={{ color: "black" }}
+            component={Link}
+            to="/Post"
+            style={{ fontSize: "1rem" }}
+            className="navLink"
+          >
+            Home
+          </Button>
+          <ListItemText primary={" "} />
+
+          <Button
+            sx={{ color: "black" }}
+            onClick={handleSignOut}
+            component={Link}
+            // as={Link}
+            // to="/signin"
+            style={{ fontSize: "1rem" }}
+            className="navLink"
+          >
+            Sign Out
+          </Button>
+        </List>
+      )}
     </Box>
   );
 
@@ -74,7 +94,7 @@ function Navbar(props) {
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-           { <img src={logo} style={{width:'75px'}} />}
+            {<img src={logo} style={{ width: "75px" }} />}
           </Typography>
 
           <Typography
@@ -82,18 +102,27 @@ function Navbar(props) {
             component="div"
             sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
           >
-            Facebook Ultra Light
+            Facebook Ultra Lite
           </Typography>
           {props.isAuthorized && (
-            <Box sx={{ display: { xs: "none", sm: "block" }}}>
-                <Button sx={{ color: "#fff" }}
-     component={Link} to="/Post"
-            style={{fontSize: '1rem'}}
-            className="navLink"
-            >
-            Home
-        </Button>
-              <a sx={{ color: "#fff" }} style={{display:'inline-block', fontSize: "1.1rem", margin:'1% 10px'}}>
+            <Box sx={{ display: { xs: "none", sm: "block" } }}>
+              <Button
+                sx={{ color: "#fff" }}
+                component={Link}
+                to="/Post"
+                style={{ fontSize: "1rem" }}
+                className="navLink"
+              >
+                Home
+              </Button>
+              <a
+                sx={{ color: "#fff" }}
+                style={{
+                  display: "inline-block",
+                  fontSize: "1.1rem",
+                  margin: "1% 10px",
+                }}
+              >
                 {`Hello, ${cookies.load("username").toUpperCase()}`}
               </a>
 
@@ -103,13 +132,11 @@ function Navbar(props) {
                 component={Link}
                 // as={Link}
                 // to="/signin"
-                style={{ fontSize: "1rem"}}
+                style={{ fontSize: "1rem" }}
                 className="navLink"
               >
                 Sign Out
               </Button>
-
-              
             </Box>
           )}
         </Toolbar>
