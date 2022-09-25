@@ -15,6 +15,7 @@ export default function addPostForm(props) {
     };
 
     await axios.post(`${process.env.REACT_APP_BACKEND}/post`, post);
+    e.target.reset();
     props.gitPosts();
   };
 

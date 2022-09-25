@@ -34,7 +34,7 @@ function App() {
             <MenuAppBar isAuthorized={isAuthorized}  checkIfAuthorized={checkIfAuthorized} />
             <Routes>
               <Route path="/signup/*" element={isAuthorized ?<Navigate to="/post" /> :<SignUp checkIfAuthorized={checkIfAuthorized} /> } />
-              <Route path="/edit/:id" element={isAuthorized ? <EditPost  /> :  <Navigate to="/signin" />} />
+              {/* <Route path="/edit/:id" element={isAuthorized ? <EditPost  /> :  <Navigate to="/signin" />} /> */}
               <Route path="/post/*" element={isAuthorized ? <Post checkIfAuthorized={checkIfAuthorized} /> :  <Navigate to="/signin" />} />
               <Route path="/signin/*" element={isAuthorized ? <Navigate to="/Post" /> : <SignIn checkIfAuthorized={checkIfAuthorized} />} />
               <Route path="/*" element={isAuthorized ? <Post checkIfAuthorized={checkIfAuthorized} /> : <Navigate to="/signin" /> }/>
