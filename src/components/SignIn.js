@@ -67,10 +67,11 @@ export default function MaterialSignIn(props) {
         }
       )
       .then((res) => {
-        console.log(res.data.user);
+        console.log(res.data.token);
         cookies.save('token', res.data.token);
         cookies.save('userID', res.data.user._id);
-        cookies.save('username', res.data.user.username)
+        cookies.save('username', res.data.user.username);
+        cookies.save('role', res.data.role);
         props.checkIfAuthorized(true);
       })
       .catch((err) => setNotAuthed(true));

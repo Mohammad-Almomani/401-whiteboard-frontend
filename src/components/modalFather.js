@@ -30,7 +30,6 @@ export default function ModalFather(props) {
 
     const handleShow = () => {
         setShow(!show);
-        console.log("show", show);
       };
     
     //   const handleClose = () => {
@@ -38,28 +37,40 @@ export default function ModalFather(props) {
     //     console.log("show", show);
     //   };
 
-      const handleDelete = async (id) => {
+    const handleDelete = async (id) => {
   
-        Swal.fire({
-          title: "Are you sure?",
-          text: "You won't be able to revert this!",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Yes, delete it!",
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            await axios.delete(`${process.env.REACT_APP_BACKEND}/post/${id}`);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await axios.delete(`${process.env.REACT_APP_BACKEND}/post/${id}`, 
+          {
+            headers: {
+              Authorization: `Bearer ${cookies.load("token")}`,
+            },
+          }).then(res => {
             props.gitPosts();
             Swal.fire("Deleted!", "Your file has been deleted.", "success");
-          }
-        });
-      };
+          }).catch(err => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops, seems like you are not authorized!',
+              text: 'Something went wrong!, Please Contact Admin'
+                })
+           })
+        }
+      });
+    };
 
   return (
 <div>
-<Card sx={{ maxWidth: 400 }}>
+<Card sx={{ maxWidth: 380 }}>
 
 <CardHeader
   avatar={
@@ -69,7 +80,7 @@ export default function ModalFather(props) {
   }
   action={
     <>
-    {console.log('from actions')}
+        {(cookies.load("role")==="admin" || cookies.load("username") === props.username) && 
       <Dropdown>
         <Dropdown.Toggle
           style={{
@@ -85,17 +96,20 @@ export default function ModalFather(props) {
             }}
           />
         </Dropdown.Toggle>
-        <Dropdown.Menu
-          style={{ backgroundColor: "lightblue" }}
-        >
-          <Dropdown.Item onClick={() => handleDelete(props.id)}>
-            Delete Post
-          </Dropdown.Item>
-          <Dropdown.Item onClick={()=>handleShow()}>
-            Edit    
-          </Dropdown.Item>
-        </Dropdown.Menu>
+  
+<Dropdown.Menu
+  style={{ backgroundColor: "lightblue" }}
+>
+  <Dropdown.Item onClick={() => handleDelete(props.id)}>
+    Delete Post
+  </Dropdown.Item>
+  <Dropdown.Item onClick={()=>handleShow()}>
+    Edit    
+  </Dropdown.Item>
+</Dropdown.Menu>
+        
       </Dropdown>
+      }
               <TestModal
   title={props.title}
   content={props.content}
@@ -129,9 +143,9 @@ By {props.username}
     {props.usersComments && (
       <Typography  paragraph style={{textAlign:'left'}}>
         {props.usersComments.map((com) => (
-          <ul style={{ display: "block" }} key={com.id}>
+          <a style={{ display: "block" }} key={com.id}>
             {com.commentAuthor.toUpperCase()}: {com.comment}
-          </ul>
+          </a>
         ))}
       </Typography>
     )}
