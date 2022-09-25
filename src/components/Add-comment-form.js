@@ -17,6 +17,7 @@ export default function AddCommentForm(props) {
     try {
     const qq = await axios.post(`${process.env.REACT_APP_BACKEND}/comment`, comment)
     console.log(qq.data)
+    e.target.reset();
     props.gitPosts();
   } catch (error) {
     console.log(error);

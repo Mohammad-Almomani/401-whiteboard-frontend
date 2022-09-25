@@ -127,11 +127,11 @@ By {props.username}
       Comments:
     </Typography>
     {props.usersComments && (
-      <Typography  paragraph>
+      <Typography  paragraph style={{textAlign:'left'}}>
         {props.usersComments.map((com) => (
-          <a style={{ display: "block" }} key={com.id}>
+          <ul style={{ display: "block" }} key={com.id}>
             {com.commentAuthor.toUpperCase()}: {com.comment}
-          </a>
+          </ul>
         ))}
       </Typography>
     )}

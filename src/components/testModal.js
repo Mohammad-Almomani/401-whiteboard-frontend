@@ -32,7 +32,9 @@ const editPost = async (e) => {
     "",
     "success"
   );
+  e.target.reset();
   props.gitPosts();
+
 };
 
 
