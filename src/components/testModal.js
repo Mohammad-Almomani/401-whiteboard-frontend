@@ -22,6 +22,7 @@ const editPost = async (e) => {
   const post = {
     title: e.target.title.value || props.title,
     content: e.target.content.value || props.content,
+    imgURL: e.target.imgURL.value || props.imgURL,
     username: cookies.load("username"),
     userID: cookies.load("userID"),
   };
@@ -70,7 +71,6 @@ const editPost = async (e) => {
           name="title"
           rows={3}
           placeholder={`${props.title}`}
-          required
         />
 
         <TextField
@@ -83,6 +83,18 @@ const editPost = async (e) => {
           rows={3}
           placeholder={props.content}
         />
+
+<TextField
+          margin="normal"
+          fullWidth
+          name="imgURL"
+          label="Type here"
+          type="text"
+          id="imgURL"
+          rows={3}
+          placeholder={props.imgURL}
+        />
+
 
         <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
           Submit
