@@ -117,6 +117,7 @@ export default function ModalFather(props) {
   show={show}
   handleClose={handleShow}
     gitPosts={props.gitPosts}
+    imgURL={props.imgURL}
 />                 
     </>
   }
@@ -126,7 +127,7 @@ By {props.username}
 <CardMedia
   component="img"
   height="194"
-  image={props.imgURL?.match(/\.(jpeg|jpg|gif|png)$/)? props.imgURL :image}
+  image={props.imgURL? props.imgURL :image}
   alt={`image of ${props.title}`}
 />
 <CardContent>
