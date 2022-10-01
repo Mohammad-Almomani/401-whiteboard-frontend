@@ -53,7 +53,7 @@ export default function addPostForm(props) {
           margin="normal"
           fullWidth
           id="title"
-          label="Example: Motivational Quote"
+          label="Title"
           type="text"
           name="title"
           rows={3}

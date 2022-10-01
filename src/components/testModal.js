@@ -66,7 +66,7 @@ const editPost = async (e) => {
           margin="normal"
           fullWidth
           id="title"
-          label="Example: Motivational Quote"
+          label="New Title (Optional)"
           type="text"
           name="title"
           rows={3}
@@ -77,7 +77,7 @@ const editPost = async (e) => {
           margin="normal"
           fullWidth
           name="content"
-          label="Type here"
+          label="New Content (Optional)"
           type="text"
           id="content"
           rows={3}
@@ -88,7 +88,7 @@ const editPost = async (e) => {
           margin="normal"
           fullWidth
           name="imgURL"
-          label="Type here"
+          label="New Image URL (Optional)"
           type="text"
           id="imgURL"
           rows={3}
