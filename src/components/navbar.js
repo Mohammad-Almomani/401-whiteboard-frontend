@@ -14,6 +14,7 @@ import Button from "@mui/material/Button";
 import cookies from "react-cookies";
 import { Link } from "react-router-dom";
 import logo from "./assets/logo-re.png";
+import { useLoginContext } from "../Context/Login_Context";
 
 const drawerWidth = 240;
 
@@ -21,27 +22,22 @@ function Navbar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
+  const {isAuthorized, handleSignOut} = useLoginContext();
+
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleSignOut = () => {
-    cookies.remove("token");
-    cookies.remove("userID");
-    cookies.remove("username");
-    cookies.remove("role");
-    props.checkIfAuthorized(false);
-  };
-
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }}>
+      <Typography data-testid="title" variant="h6" sx={{ my: 2 }}>
         Facebook Ultra Lite
         {<img src={logo} style={{ width: "75px" }} />}
       </Typography>
       <Divider />
 
-      {props.isAuthorized && (
+      {isAuthorized && (
         <List>
           <ListItemText
             primary={`Hello, ${cookies.load("username").toUpperCase()}`}
@@ -105,7 +101,7 @@ function Navbar(props) {
           >
             Facebook Ultra Lite
           </Typography>
-          {props.isAuthorized && (
+          {isAuthorized && (
             <Box sx={{ display: { xs: "none", sm: "block" } }}>
               <Button
                 sx={{ color: "#fff" }}

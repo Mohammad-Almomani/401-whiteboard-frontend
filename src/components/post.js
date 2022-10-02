@@ -1,43 +1,15 @@
 import * as React from "react";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
-import image from "./assets/img.jpg";
 import AddPostForm from "./Add-post-form";
-import cookies from "react-cookies";
-import { Link, Navigate } from "react-router-dom";
-import Swal from "sweetalert2";
 import ModalFather from "./modalFather";
 import { Button } from "@mui/material";
+import { useLoginContext } from "../Context/Login_Context";
 
-export default function Newposts(props) {
-  const [post, setPost] = useState(null);
+export default function Posts() {
 
-  let [show, setShow] = useState(false);
-
-  // const handleClose = () =>{
-  //   setShow(false)}
-  //   console.log('show',show);
-  //   ;
-
-  const gitPosts = async () => {
-    const allPosts = await axios.get(`${process.env.REACT_APP_BACKEND}/post`, {
-      headers: {
-        Authorization: `Bearer ${cookies.load("token")}`,
-      },
-    });
-
-    setPost(allPosts.data);
-  };
-
-  const handleSignOut = () => {
-    cookies.remove("token");
-    cookies.remove("userID");
-    cookies.remove("username");
-    cookies.remove("role");
-    props.checkIfAuthorized(false);
-  };
+  const {handleSignOut, gitPosts, post} = useLoginContext();
 
   useEffect(() => {
     gitPosts();
@@ -45,7 +17,7 @@ export default function Newposts(props) {
 
   return (
     <>
-      <AddPostForm gitPosts={gitPosts} />
+      <AddPostForm />
 
       <Row style={{ marginLeft: "7.5%" }} xs={1} sm={2} md={3} className="g-4">
         {post &&
@@ -58,7 +30,6 @@ export default function Newposts(props) {
                   id={pos.id}
                   usersComments={pos.usersComments}
                   title={pos.title}
-                  gitPosts={gitPosts}
                   imgURL={pos.imgURL}
                 />
               </Col>

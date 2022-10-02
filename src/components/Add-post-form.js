@@ -4,8 +4,11 @@ import { Button, TextField } from "@mui/material";
 import { Form } from "react-bootstrap";
 import cookies from "react-cookies";
 import Swal from "sweetalert2";
+import { useLoginContext } from "../Context/Login_Context";
 
-export default function addPostForm(props) {
+export default function AddPostForm() {
+  const { gitPosts } = useLoginContext();
+
   const addPost = async (e) => {
     e.preventDefault();
     console.log(e.target.imgURL.value);
@@ -17,32 +20,34 @@ export default function addPostForm(props) {
       userID: cookies.load("userID"),
     };
 
-    await axios.post(`${process.env.REACT_APP_BACKEND}/post`, post, {
-      headers: {
-        Authorization: `Bearer ${cookies.load("token")}`,
-      },
-    }).then(res => {
-      console.log(res);
-
-      Swal.fire({
-        position: 'center',
-        icon: 'success',
-        title: 'Your Posted Successfully',
-        showConfirmButton: false,
-        timer: 1500
+    await axios
+      .post(`${process.env.REACT_APP_BACKEND}/post`, post, {
+        headers: {
+          Authorization: `Bearer ${cookies.load("token")}`,
+        },
       })
-      e.target.reset();
-      props.gitPosts();
+      .then((res) => {
+        console.log(res);
 
-    }).catch(err => {
-      console.log(err);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops, seems like you are not authorized!',
-        text: 'Something went wrong!, Please Contact Admin'
-          })
-    })
-  }
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your Posted Successfully",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        e.target.reset();
+        gitPosts();
+      })
+      .catch((err) => {
+        console.log(err);
+        Swal.fire({
+          icon: "error",
+          title: "Oops, seems like you are not authorized!",
+          text: "Something went wrong!, Please Contact Admin",
+        });
+      });
+  };
 
   return (
     <div>
@@ -70,7 +75,7 @@ export default function addPostForm(props) {
           rows={3}
         />
 
-    <TextField
+        <TextField
           margin="normal"
           fullWidth
           name="imgURL"

@@ -12,92 +12,26 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { useState } from "react";
-import axios from "axios";
-import { Alert, Dropdown } from "react-bootstrap";
-import cookies from "react-cookies";
-import { ArrowDropDown } from "@mui/icons-material";
+import { Alert } from "react-bootstrap";
 import { InputLabel, MenuItem, Select } from "@mui/material";
+import { useLoginContext } from "../Context/Login_Context";
 
 const theme = createTheme();
 
-export default function SignUp(props) {
-  const [passwordType, setPasswordType] = useState("password");
-  const [NotMatched, setNotMatched] = useState(false);
-  const [notFilled, setNotFilled] = useState(false);
-  const [alreadyExist, setAlreadyExist] = useState(false);
-
-  const [isValid, setIsValid] = useState(false);
-  const [message, setMessage] = useState("");
-
-  const [role, setRole] = useState("user");
-
-  const handleRoleChange = (event) => {
-    setRole(event.target.value);
-  };
-
-  const signUp = (e) => {
-    e.preventDefault();
-    const filledData = new FormData(e.currentTarget);
-    setNotFilled(false);
-    setAlreadyExist(false);
-    setNotMatched(false);
-
-    if (
-      !filledData.get("email") ||
-      !filledData.get("password") ||
-      !filledData.get("confirmPassword") ||
-      !filledData.get("username")
-    ) {
-      setNotFilled(true);
-      return;
-    }
-    setNotFilled(false);
-    if (filledData.get("password") !== filledData.get("confirmPassword")) {
-      return setNotMatched(true);
-    }
-    setNotMatched(false);
-
-    if (isValid) {
-      const data = {
-        username: filledData.get("username"),
-        email: filledData.get("email"),
-        password: filledData.get("password"),
-        role: role,
-      };
-      console.log(data);
-      axios
-        .post(`${process.env.REACT_APP_BACKEND}/signup`, data)
-        .then((res) => {
-          console.log(res.data.user);
-          cookies.save("token", res.data.token);
-          cookies.save("role", res.data.role);
-          cookies.save("userID", res.data.id);
-          cookies.save("username", res.data.username);
-          props.checkIfAuthorized(true);
-        })
-        .catch((e) => setAlreadyExist(true));
-    }
-  };
-
-  const togglePassword = () => {
-    if (passwordType === "password") {
-      setPasswordType("text");
-      return;
-    }
-    setPasswordType("password");
-  };
-  const emailRegex = /\S+@\S+\.\S+/;
-  const validateEmail = (event) => {
-    const email = event.target.value;
-    if (emailRegex.test(email)) {
-      setIsValid(true);
-      setMessage("Your email looks good!");
-    } else {
-      setIsValid(false);
-      setMessage("Please enter a valid email!");
-    }
-  };
+export default function SignUp() {
+  const {
+    togglePassword,
+    passwordType,
+    NotMatched,
+    alreadyExist,
+    isValid,
+    message,
+    role,
+    handleRoleChange,
+    signUp,
+    validateEmail,
+    notFilled,
+  } = useLoginContext();
 
   return (
     <ThemeProvider theme={theme}>
@@ -169,7 +103,9 @@ export default function SignUp(props) {
                 />
               </Grid>
               <Grid item xs={12}>
-                <InputLabel id="demo-simple-select-label">Please Pick Your Role</InputLabel>
+                <InputLabel id="demo-simple-select-label">
+                  Please Pick Your Role
+                </InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -177,7 +113,9 @@ export default function SignUp(props) {
                   label="Role"
                   onChange={handleRoleChange}
                 >
-                  <MenuItem value="user" defaultChecked>User</MenuItem>
+                  <MenuItem value="user" defaultChecked>
+                    User
+                  </MenuItem>
                   <MenuItem value="admin">Admin</MenuItem>
                 </Select>
               </Grid>
