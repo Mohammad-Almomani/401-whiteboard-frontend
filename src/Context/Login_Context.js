@@ -8,24 +8,81 @@ const LoginContext = createContext();
 export const useLoginContext = () => useContext(LoginContext);
 
 const LoginContextProvider = (props) => {
+
+  // User authentication check
+  const [role, setRole] = useState("user");
+  let [isAuthorized, setIsAuthorized] = useState(false);
+  
+    const checkIfAuthorized = (bool) => {
+      setIsAuthorized(bool);
+    };
+  
+    const handleLogIn = (e) => {
+      e.preventDefault();
+      const filledData = new FormData(e.currentTarget);
+      setNotAuthed(false);
+      setNotFilledSignIn(false);
+      if (!filledData.get("email") || !filledData.get("password")) {
+        setNotFilledSignIn(true);
+        return;
+      }
+      setNotFilledSignIn(false);
+  
+      const data = {
+        username: filledData.get("email"),
+        password: filledData.get("password"),
+      };
+      const encodedCredintial = base64.encode(
+        `${data.username}:${data.password}`
+      );
+      axios
+        .post(
+          `${process.env.REACT_APP_BACKEND}/signin`,
+          {},
+          {
+            headers: {
+              Authorization: `Basic ${encodedCredintial}`,
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res.data.token);
+          cookies.save("token", res.data.token);
+          cookies.save("userID", res.data.user._id);
+          cookies.save("username", res.data.user.username);
+          cookies.save("role", res.data.role);
+          checkIfAuthorized(true);
+        })
+        .catch((err) => setNotAuthed(true));
+    };
+  
+    const handleSignOut = () => {
+      cookies.remove("token");
+      cookies.remove("userID");
+      cookies.remove("username");
+      cookies.remove("role");
+      checkIfAuthorized(false);
+    };
+  
+  
+  
+  // forms validation check
   const [passwordType, setPasswordType] = useState("password");
   const [passwordTypeSignIn, setPasswordTypeSignIn] = useState("password");
-
+  
   const [notFilled, setNotFilled] = useState(false);
   const [notFilledSignIn, setNotFilledSignIn] = useState(false);
-
+  
   const [notAuthed, setNotAuthed] = useState(false);
   const [contactAdmin, setContactAdmin] = useState(false);
-
+  
   const [NotMatched, setNotMatched] = useState(false);
   const [alreadyExist, setAlreadyExist] = useState(false);
-
+  
   const [isValid, setIsValid] = useState(false);
   const [message, setMessage] = useState("");
-
-  const [role, setRole] = useState("user");
-
-  let [isAuthorized, setIsAuthorized] = useState(false);
+  
+  const [post, setPost] = useState(null);
 
 
   const togglePassword = () => {
@@ -49,59 +106,6 @@ const LoginContextProvider = (props) => {
   };
 
 
-  const checkIfAuthorized = (bool) => {
-    // localStorage.setItem( 'islooged', bool);
-    setIsAuthorized(bool);
-  };
-
-  const handleLogIn = (e) => {
-    e.preventDefault();
-    const filledData = new FormData(e.currentTarget);
-    setNotAuthed(false);
-    setNotFilledSignIn(false);
-    if (!filledData.get("email") || !filledData.get("password")) {
-      setNotFilledSignIn(true);
-      return;
-    }
-    setNotFilledSignIn(false);
-
-    const data = {
-      username: filledData.get("email"),
-      password: filledData.get("password"),
-    };
-    const encodedCredintial = base64.encode(
-      `${data.username}:${data.password}`
-    );
-    axios
-      .post(
-        `${process.env.REACT_APP_BACKEND}/signin`,
-        {},
-        {
-          headers: {
-            Authorization: `Basic ${encodedCredintial}`,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data.token);
-        cookies.save("token", res.data.token);
-        cookies.save("userID", res.data.user._id);
-        cookies.save("username", res.data.user.username);
-        cookies.save("role", res.data.role);
-        checkIfAuthorized(true);
-      })
-      .catch((err) => setNotAuthed(true));
-  };
-
-  const handleSignOut = () => {
-    cookies.remove("token");
-    cookies.remove("userID");
-    cookies.remove("username");
-    cookies.remove("role");
-    checkIfAuthorized(false);
-  };
-
-  const [post, setPost] = useState(null);
 
   const gitPosts = async () => {
     const allPosts = await axios.get(`${process.env.REACT_APP_BACKEND}/post`, {
@@ -113,6 +117,8 @@ const LoginContextProvider = (props) => {
     setPost(allPosts.data);
   };
 
+
+  // signup form validation
   const handleRoleChange = (event) => {
     setRole(event.target.value);
   };

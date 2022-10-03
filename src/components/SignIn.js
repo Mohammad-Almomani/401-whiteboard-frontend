@@ -105,7 +105,7 @@ const {notFilledSignIn, notAuthed, togglePasswordSignIn, handleForgetPassword, h
                 </Link>
               </Grid>
               <Grid item>
-                <Link to='/signup'  variant="body2">
+                <Link to='/signup'  variant="body2" data-testid="signUpRoute">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

@@ -1,8 +1,10 @@
 import React from "react";
 import { render, fireEvent, waitFor, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/extend-expect";
+import '@testing-library/jest-dom'
 import App from "../App";
-import userEvent from "@testing-library/user-event";
+import AppRoutes from "../components/Routes";
+import LoginContextProvider from "../Context/Login_Context";
 
 test("Check title", async () => {
   render(<App />);
@@ -10,22 +12,42 @@ test("Check title", async () => {
   expect(title).toHaveTextContent("Facebook Ultra Lite");
 });
 
-// test("Check display info", async () => {
-//   render(<App />);
-//   const signInButton = await waitFor(() => screen.findByTestId("signInButton"));
-//   const homePage = await waitFor(() => screen.findByTestId("homePage"));
+test("Check Context and Auth", async () => {
+  render( <LoginContextProvider ><AppRoutes /></LoginContextProvider>);
 
-//   fireEvent.click(signInButton)
-//   // console.log(personInfo.textContent);
+  const signInButton = await waitFor(() => screen.findByTestId("signInButton"));
+  const homePage = await waitFor(() => screen.findByTestId("homePage"));
+
+  fireEvent.click(signInButton)
+  expect(homePage).toHaveTextContent("Please enter your email and password");
+
+// const username = screen.getByTestId("username");
+// // await userEvent.type((username, 'mohammad'));
+// await fireEvent.change(username, { target: { value: "mohammad" } });
+
+// const password = screen.getByTestId("password");
+// await fireEvent.change(password, { target: { value: "mohammad" } });
+// expect(password.value).toBe("mohammad");
+// console.log(username)
+
+//  fireEvent.click(signInButton)
 //   expect(homePage).toHaveTextContent("Please enter your email and password");
 
-//   const username = screen.getByTestId("username");
-// //   console.log(username)
-// fireEvent.change(username, { target: { value: "mohammad" } });
-//   expect(username.value).toBe("mohammad");
+  // expect(username.value).toBe("mohammad");
 
-//   const password = screen.getByTestId("password");
-//   fireEvent.change(password, { target: { value: "mohammad" } });
-//   expect(password.value).toBe("mohammad");
+  // expect(password.value).toBe("mohammad");
 
-// });
+});
+
+test("Check Routes", async () => {
+  render( <LoginContextProvider ><AppRoutes /></LoginContextProvider>);
+
+  const signUpRoute = await waitFor(() => screen.findByTestId("signUpRoute"));
+  const signUpButton = await waitFor(() => screen.findByTestId("signInButton"));
+  const homePage = await waitFor(() => screen.findByTestId("homePage"));
+
+  fireEvent.click(signUpRoute)
+  fireEvent.click(signUpButton)
+  expect(homePage).toHaveTextContent("Sign Up");
+
+});

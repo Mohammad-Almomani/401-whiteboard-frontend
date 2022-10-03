@@ -152,6 +152,7 @@ export default function SignUp() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              data-testid="signUpButton"
             >
               Sign Up
             </Button>
