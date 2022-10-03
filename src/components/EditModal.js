@@ -6,8 +6,11 @@ import Button from '@mui/material/Button';
 import Modal from 'react-bootstrap/Modal';
 import cookies from "react-cookies";
 import Swal from "sweetalert2";
+import { useLoginContext } from '../Context/Login_Context';
 
 export default function TestModal(props) {
+
+  const {gitPosts} = useLoginContext();
  
   const id = props.id;
   const handleClose = () =>{ 
@@ -38,7 +41,7 @@ const editPost = async (e) => {
       "success"
     );
     e.target.reset();
-    props.gitPosts();
+    gitPosts();
   }).catch(err => {
     Swal.fire({
       icon: 'error',

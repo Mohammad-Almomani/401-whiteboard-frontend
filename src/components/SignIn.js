@@ -12,70 +12,15 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
-import base64 from "base-64";
-import { useState } from "react";
 import { Alert } from "react-bootstrap";
-import cookies from 'react-cookies';
-
+import {useLoginContext} from "../Context/Login_Context"
 
 const theme = createTheme();
 
-export default function MaterialSignIn(props) {
-  const [passwordType, setPasswordType] = useState("password");
-  const [notFilled, setNotFilled] = useState(false);
-  const [notAuthed, setNotAuthed] = useState(false);
-  const [contactAdmin, setContactAdmin] = useState(false);
+export default function MaterialSignIn() {
+  
+const {notFilledSignIn, notAuthed, togglePasswordSignIn, handleForgetPassword, handleLogIn, contactAdmin, passwordTypeSignIn} =useLoginContext()
 
-  const togglePassword = () => {
-    if (passwordType === "password") {
-      setPasswordType("text");
-      return;
-    }
-    setPasswordType("password");
-  };
-
-  const handleForgetPassword = () => {
-   return setContactAdmin(!contactAdmin);
-  };
-
-  const handleLogIn =  (e) => {
-    e.preventDefault();
-    const filledData = new FormData(e.currentTarget);
-    setNotAuthed(false)
-    setNotFilled(false);
-    if (!filledData.get("email") || !filledData.get("password")) {
-      setNotFilled(true);
-      return;
-    }
-    setNotFilled(false);
-
-    const data = {
-      username: filledData.get("email"),
-      password: filledData.get("password"),
-    };
-    const encodedCredintial = base64.encode(
-        `${data.username}:${data.password}`
-        );
-   axios.post(
-        `${process.env.REACT_APP_BACKEND}/signin`,
-        {},
-        {
-          headers: {
-            Authorization: `Basic ${encodedCredintial}`,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data.token);
-        cookies.save('token', res.data.token);
-        cookies.save('userID', res.data.user._id);
-        cookies.save('username', res.data.user.username);
-        cookies.save('role', res.data.role);
-        props.checkIfAuthorized(true);
-      })
-      .catch((err) => setNotAuthed(true));
-  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -109,6 +54,7 @@ export default function MaterialSignIn(props) {
               name="email"
               type="email"
               autoFocus
+              data-testid="username"
               required
             />
             <TextField
@@ -116,22 +62,23 @@ export default function MaterialSignIn(props) {
               fullWidth
               name="password"
               label="Password"
-              type={passwordType}
+              type={passwordTypeSignIn}
               id="password"
               autoComplete="current-password"
+              data-testid="password"
               required
             />
             <FormControlLabel
               control={
                 <Checkbox
-                  onClick={togglePassword}
+                  onClick={togglePasswordSignIn}
                   value="remember"
                   color="primary"
                 />
               }
               label="Show Password"
             />
-            {notFilled && (
+            {notFilledSignIn && (
               <Alert key="light" variant="danger">
                 Please enter your email and password
               </Alert>
@@ -146,6 +93,7 @@ export default function MaterialSignIn(props) {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              data-testid="signInButton"
             >
               Sign In
             </Button>
@@ -157,7 +105,7 @@ export default function MaterialSignIn(props) {
                 </Link>
               </Grid>
               <Grid item>
-                <Link to='/signup'  variant="body2">
+                <Link to='/signup'  variant="body2" data-testid="signUpRoute">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
