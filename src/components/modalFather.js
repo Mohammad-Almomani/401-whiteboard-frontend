@@ -9,23 +9,20 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import {  useState } from "react";
 import AddCommentForm from "./Add-comment-form";
 import { Col, Dropdown, Row } from "react-bootstrap";
 import image from "./assets/img.jpg";
-import cookies from "react-cookies";
-import Swal from "sweetalert2";
 import TestModal from "./EditModal";
-import { useLoginContext } from "../Context/Login_Context";
+import { useLoginContext } from "../Context/AuthContext";
+import { usePostContext } from "../Context/PostsContext";
 
-// import Button from 'react-bootstrap/Button';
-// import Card from 'react-bootstrap/Card';
 
 export default function ModalFather(props) {
   let [show, setShow] = useState(false);
-
-  const { gitPosts } = useLoginContext();
+  
+  const { capabilities, user, canDo } = useLoginContext();
+  const { handleDelete } = usePostContext();
 
   const handleShow = () => {
     setShow(!show);
@@ -35,38 +32,6 @@ export default function ModalFather(props) {
   //     setShow(false);
   //     console.log("show", show);
   //   };
-
-  const handleDelete = async (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        await axios
-          .delete(`${process.env.REACT_APP_BACKEND}/post/${id}`, {
-            headers: {
-              Authorization: `Bearer ${cookies.load("token")}`,
-            },
-          })
-          .then((res) => {
-            gitPosts();
-            Swal.fire("Deleted!", "Your file has been deleted.", "success");
-          })
-          .catch((err) => {
-            Swal.fire({
-              icon: "error",
-              title: "Oops, seems like you are not authorized!",
-              text: "Something went wrong!, Please Contact Admin",
-            });
-          });
-      }
-    });
-  };
 
   return (
     <div>
@@ -79,8 +44,8 @@ export default function ModalFather(props) {
           }
           action={
             <>
-              {(cookies.load("role") === "admin" ||
-                cookies.load("username") === props.username) && (
+            {/* {console.log("user", user, "capabilities", capabilities)} */}
+              {(canDo(user.username, props.username)) && (
                 <Dropdown>
                   <Dropdown.Toggle
                     style={{

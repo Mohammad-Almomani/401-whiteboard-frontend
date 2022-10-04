@@ -11,10 +11,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import cookies from "react-cookies";
 import { Link } from "react-router-dom";
 import logo from "./assets/logo-re.png";
-import { useLoginContext } from "../Context/Login_Context";
+import { useLoginContext } from "../Context/AuthContext";
 
 const drawerWidth = 240;
 
@@ -22,12 +21,13 @@ function Navbar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const {isAuthorized, handleSignOut} = useLoginContext();
+  const {isAuthorized, handleSignOut, user} = useLoginContext();
 
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
@@ -40,8 +40,8 @@ function Navbar(props) {
       {isAuthorized && (
         <List>
           <ListItemText
-            primary={`Hello, ${cookies.load("username").toUpperCase()}`}
-          />
+            primary={`Hello, ${user.username?.toUpperCase()}`}
+            />
 
           <Button
             sx={{ color: "black" }}
@@ -120,7 +120,7 @@ function Navbar(props) {
                   margin: "1% 10px",
                 }}
               >
-                {`Hello, ${cookies.load("username").toUpperCase()}`}
+                {`Hello, ${user.username?.toUpperCase()}`}
               </a>
 
               <Button

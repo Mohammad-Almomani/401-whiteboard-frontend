@@ -4,10 +4,13 @@ import { Button, TextField } from "@mui/material";
 import { Form } from "react-bootstrap";
 import cookies from "react-cookies";
 import Swal from "sweetalert2";
-import { useLoginContext } from "../Context/Login_Context";
+import { useLoginContext } from "../Context/AuthContext";
+import { usePostContext } from "../Context/PostsContext";
+
 
 export default function AddPostForm() {
-  const { gitPosts } = useLoginContext();
+  const {  user } = useLoginContext();
+  const { gitPosts } = usePostContext();
 
   const addPost = async (e) => {
     e.preventDefault();
@@ -16,8 +19,8 @@ export default function AddPostForm() {
       title: e.target.title.value,
       content: e.target.content.value,
       imgURL: e.target.imgURL.value,
-      username: cookies.load("username"),
-      userID: cookies.load("userID"),
+      username: user.username,
+      userID: user.id,
     };
 
     await axios

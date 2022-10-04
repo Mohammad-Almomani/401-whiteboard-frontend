@@ -1,6 +1,5 @@
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
-import { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,19 +9,24 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 import Post from "./post";
 import Copyright from "./CopyRight";
-import cookies from "react-cookies";
 import MenuAppBar from "./navbar";
-import { useLoginContext } from "../Context/Login_Context";
+import { useEffect } from "react";
+import { useLoginContext } from "../Context/AuthContext";
+import { usePostContext } from "../Context/PostsContext";
+import cookies from "react-cookies";
 
 function AppRoutes() {
-  const { isAuthorized, checkIfAuthorized } = useLoginContext();
+
+  const { isAuthorized, checkToken } = useLoginContext();
+
+  const { gitPosts } = usePostContext();
 
   useEffect(() => {
-    const token = cookies.load("token");
-    if (token) {
-      checkIfAuthorized(true);
+    if (cookies.load("token")) {
+    checkToken()
+    gitPosts()
     }
-  }, []);
+  }, [isAuthorized])
 
   return (
     <div className="App" data-testid="homePage">
