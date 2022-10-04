@@ -3,18 +3,20 @@ import axios from "axios";
 import { Form } from "react-bootstrap";
 import Button from "@mui/material/Button";
 import { TextField } from "@mui/material";
-import cookies from "react-cookies";
-import { useLoginContext } from "../Context/Login_Context";
+import { useLoginContext } from "../Context/AuthContext";
+import { usePostContext } from "../Context/PostsContext";
 
 export default function AddCommentForm(props) {
-  const { gitPosts } = useLoginContext();
+  const {  user } = useLoginContext();
+  const { gitPosts } = usePostContext();
+
   const addComment = async (e) => {
     e.preventDefault();
     const comment = {
       comment: e.target.content.value,
       postID: props.postID,
-      userID: cookies.load("userID"),
-      commentAuthor: cookies.load("username"),
+      userID: user.id,
+      commentAuthor: user.username
     };
     try {
       const qq = await axios.post(

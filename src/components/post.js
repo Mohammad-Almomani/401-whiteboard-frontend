@@ -1,19 +1,17 @@
 import * as React from "react";
-
-import { useEffect } from "react";
 import { Col, Row } from "react-bootstrap";
 import AddPostForm from "./Add-post-form";
 import ModalFather from "./modalFather";
 import { Button } from "@mui/material";
-import { useLoginContext } from "../Context/Login_Context";
+import { useLoginContext } from "../Context/AuthContext";
+import { usePostContext } from "../Context/PostsContext";
+
 
 export default function Posts() {
+  
+  const {handleSignOut} = useLoginContext();
+  const { post } = usePostContext();
 
-  const {handleSignOut, gitPosts, post} = useLoginContext();
-
-  useEffect(() => {
-    gitPosts();
-  }, []);
 
   return (
     <>
