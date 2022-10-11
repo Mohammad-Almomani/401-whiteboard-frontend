@@ -7,25 +7,20 @@ import Swal from "sweetalert2";
 
 const PostContext = createContext();
 
-
 export const usePostContext = () => useContext(PostContext);
 
 const PostContextProvider = (props) => {
+  const [post, setPost] = useState(null);
 
-    const [post, setPost] = useState(null);
+  const gitPosts = async () => {
+    const allPosts = await axios.get(`${process.env.REACT_APP_BACKEND}/post`, {
+      headers: {
+        Authorization: `Bearer ${cookies.load("token")}`,
+      },
+    });
 
-
-    const gitPosts = async () => {
-        const allPosts = await axios.get(`${process.env.REACT_APP_BACKEND}/post`, {
-          headers: {
-            Authorization: `Bearer ${cookies.load("token")}`,
-          },
-        });
-    
-        setPost(allPosts.data);
-      };
-
-
+    setPost(allPosts.data);
+  };
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -59,17 +54,14 @@ const PostContextProvider = (props) => {
     });
   };
 
-
-    const value = {
-        gitPosts,
-        post,
-        handleDelete
-    }
-    return (
-        <PostContext.Provider value={value}>
-            {props.children}
-        </PostContext.Provider>
-    )
-}
+  const value = {
+    gitPosts,
+    post,
+    handleDelete,
+  };
+  return (
+    <PostContext.Provider value={value}>{props.children}</PostContext.Provider>
+  );
+};
 
 export default PostContextProvider;
