@@ -1,23 +1,19 @@
 import { TextField } from "@mui/material";
-import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
 import { Form } from "react-bootstrap";
 import Button from "@mui/material/Button";
 import Modal from "react-bootstrap/Modal";
-import cookies from "react-cookies";
-import Swal from "sweetalert2";
 import { useLoginContext } from "../Context/AuthContext";
 import { usePostContext } from "../Context/PostsContext";
-
+import { editPostAction } from "../actions/PostsActions";
 
 export default function TestModal(props) {
-  const {  user } = useLoginContext();
+  const { user } = useLoginContext();
   const { gitPosts } = usePostContext();
 
   const id = props.id;
   const handleClose = () => {
     props.handleClose();
-    // console.log('show',show);
   };
 
   const editPost = async (e) => {
@@ -29,25 +25,8 @@ export default function TestModal(props) {
       username: user.username,
       userID: user.id,
     };
-
-    await axios
-      .put(`${process.env.REACT_APP_BACKEND}/post/${id}`, post, {
-        headers: {
-          Authorization: `Bearer ${cookies.load("token")}`,
-        },
-      })
-      .then((res) => {
-        Swal.fire("Post Updated Successfully!", "", "success");
-        e.target.reset();
-        gitPosts();
-      })
-      .catch((err) => {
-        Swal.fire({
-          icon: "error",
-          title: "Oops, seems like you are not authorized!",
-          text: "Something went wrong!, Please Contact Admin",
-        });
-      });
+    editPostAction(id, post, gitPosts);
+    e.target.reset();
   };
 
   return (
@@ -58,10 +37,6 @@ export default function TestModal(props) {
         onHide={props.handleClose}
       >
         <Modal.Header closeButton></Modal.Header>
-        {/* <Modal.Body></Modal.Body>
-      <Modal.Body>{props.id}</Modal.Body>
-      <Modal.Body>{props.content}</Modal.Body> */}
-
         <Form onSubmit={editPost} style={{ margin: "3% 30%" }}>
           <h3>Edit Post</h3>
           <TextField

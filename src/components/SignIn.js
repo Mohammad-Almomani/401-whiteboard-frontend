@@ -5,7 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -13,14 +13,20 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Alert } from "react-bootstrap";
-import {useLoginContext} from "../Context/AuthContext"
+import { useLoginContext } from "../Context/AuthContext";
 
 const theme = createTheme();
 
 export default function MaterialSignIn() {
-  
-const {notFilledSignIn, notAuthed, togglePasswordSignIn, handleForgetPassword, handleLogIn, contactAdmin, passwordTypeSignIn} =useLoginContext()
-
+  const {
+    notFilledSignIn,
+    notAuthed,
+    togglePasswordSignIn,
+    handleForgetPassword,
+    handleLogIn,
+    contactAdmin,
+    passwordTypeSignIn,
+  } = useLoginContext();
 
   return (
     <ThemeProvider theme={theme}>
@@ -100,23 +106,21 @@ const {notFilledSignIn, notAuthed, togglePasswordSignIn, handleForgetPassword, h
 
             <Grid container>
               <Grid item xs>
-                <Link onClick={handleForgetPassword}>
-                  Forgot password?
-                </Link>
+                <Link onClick={handleForgetPassword}>Forgot password?</Link>
               </Grid>
               <Grid item>
-                <Link to='/signup'  variant="body2" data-testid="signUpRoute">
+                <Link to="/signup" variant="body2" data-testid="signUpRoute">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
             </Grid>
           </Box>
         </Box>
-        { contactAdmin&& (
-              <Alert key="strong" variant="danger" onClick={handleForgetPassword}>
-                Please contact the admin to reset your password
-              </Alert>
-            )}
+        {contactAdmin && (
+          <Alert key="strong" variant="danger" onClick={handleForgetPassword}>
+            Please contact the admin to reset your password
+          </Alert>
+        )}
       </Container>
     </ThemeProvider>
   );

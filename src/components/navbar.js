@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import * as React from "react";
 import PropTypes from "prop-types";
 import AppBar from "@mui/material/AppBar";
@@ -21,27 +22,23 @@ function Navbar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
-  const {isAuthorized, handleSignOut, user} = useLoginContext();
-
+  const { isAuthorized, handleSignOut, user } = useLoginContext();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
       <Typography data-testid="title" variant="h6" sx={{ my: 2 }}>
         Facebook Ultra Lite
-        {<img src={logo} style={{ width: "75px" }} />}
+        {<img src={logo} alt="logo" style={{ width: "75px" }} />}
       </Typography>
       <Divider />
 
       {isAuthorized && (
         <List>
-          <ListItemText
-            primary={`Hello, ${user.username?.toUpperCase()}`}
-            />
+          <ListItemText primary={`Hello, ${user.username?.toUpperCase()}`} />
 
           <Button
             sx={{ color: "black" }}
@@ -91,7 +88,7 @@ function Navbar(props) {
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            {<img src={logo} style={{ width: "75px" }} />}
+            {<img src={logo} alt="logo" style={{ width: "75px" }} />}
           </Typography>
 
           <Typography
@@ -166,10 +163,6 @@ function Navbar(props) {
 }
 
 Navbar.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
   window: PropTypes.func,
 };
 

@@ -4,7 +4,8 @@ import "@testing-library/jest-dom/extend-expect";
 import '@testing-library/jest-dom'
 import App from "../App";
 import AppRoutes from "../components/Routes";
-import LoginContextProvider from "../Context/Login_Context";
+import LoginContextProvider from "../Context/AuthContext";
+import PostContextProvider from "../Context/PostsContext";
 
 test("Check title", async () => {
   render(<App />);
@@ -13,7 +14,7 @@ test("Check title", async () => {
 });
 
 test("Check Context and Auth", async () => {
-  render( <LoginContextProvider ><AppRoutes /></LoginContextProvider>);
+  render( <LoginContextProvider > <PostContextProvider> <AppRoutes /></PostContextProvider></LoginContextProvider>);
 
   const signInButton = await waitFor(() => screen.findByTestId("signInButton"));
   const homePage = await waitFor(() => screen.findByTestId("homePage"));
@@ -40,7 +41,7 @@ test("Check Context and Auth", async () => {
 });
 
 test("Check Routes", async () => {
-  render( <LoginContextProvider ><AppRoutes /></LoginContextProvider>);
+  render( <LoginContextProvider ><PostContextProvider> <AppRoutes /></PostContextProvider></LoginContextProvider>);
 
   const signUpRoute = await waitFor(() => screen.findByTestId("signUpRoute"));
   const signUpButton = await waitFor(() => screen.findByTestId("signInButton"));

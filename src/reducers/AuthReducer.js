@@ -126,6 +126,7 @@ export const AuthReducer = (state, action) => {
         role: action.payload,
       };
     default:
-      throw new Error(`Unkown action type: ${action.type}`);
+      console.error("Invalid action type");
+      return state;
   }
 };

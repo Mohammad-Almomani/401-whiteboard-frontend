@@ -7,9 +7,8 @@ import Swal from "sweetalert2";
 import { useLoginContext } from "../Context/AuthContext";
 import { usePostContext } from "../Context/PostsContext";
 
-
 export default function AddPostForm() {
-  const {  user } = useLoginContext();
+  const { user } = useLoginContext();
   const { gitPosts } = usePostContext();
 
   const addPost = async (e) => {
