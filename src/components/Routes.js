@@ -16,17 +16,16 @@ import { usePostContext } from "../Context/PostsContext";
 import cookies from "react-cookies";
 
 function AppRoutes() {
-
   const { isAuthorized, checkToken } = useLoginContext();
 
   const { gitPosts } = usePostContext();
 
   useEffect(() => {
     if (cookies.load("token")) {
-    checkToken()
-    gitPosts()
+      checkToken();
+      gitPosts();
     }
-  }, [isAuthorized])
+  }, [isAuthorized]);
 
   return (
     <div className="App" data-testid="homePage">

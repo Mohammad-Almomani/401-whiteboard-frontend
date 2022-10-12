@@ -9,29 +9,24 @@ import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import {  useState } from "react";
+import { useState } from "react";
 import AddCommentForm from "./Add-comment-form";
-import { Col, Dropdown, Row } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 import image from "./assets/img.jpg";
 import TestModal from "./EditModal";
 import { useLoginContext } from "../Context/AuthContext";
 import { usePostContext } from "../Context/PostsContext";
-
+import { deletePostAction } from "../actions/PostsActions";
 
 export default function ModalFather(props) {
   let [show, setShow] = useState(false);
-  
-  const { capabilities, user, canDo } = useLoginContext();
-  const { handleDelete } = usePostContext();
+
+  const { user, canDo } = useLoginContext();
+  const { gitPosts } = usePostContext();
 
   const handleShow = () => {
     setShow(!show);
   };
-
-  //   const handleClose = () => {
-  //     setShow(false);
-  //     console.log("show", show);
-  //   };
 
   return (
     <div>
@@ -44,8 +39,7 @@ export default function ModalFather(props) {
           }
           action={
             <>
-            {/* {console.log("user", user, "capabilities", capabilities)} */}
-              {(canDo(user.username, props.username)) && (
+              {canDo(user.username, props.username) && (
                 <Dropdown>
                   <Dropdown.Toggle
                     style={{
@@ -63,7 +57,9 @@ export default function ModalFather(props) {
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu style={{ backgroundColor: "lightblue" }}>
-                    <Dropdown.Item onClick={() => handleDelete(props.id)}>
+                    <Dropdown.Item
+                      onClick={() => deletePostAction(props.id, gitPosts)}
+                    >
                       Delete Post
                     </Dropdown.Item>
                     <Dropdown.Item onClick={() => handleShow()}>
@@ -105,6 +101,7 @@ export default function ModalFather(props) {
             {props.usersComments && (
               <Typography paragraph style={{ textAlign: "left" }}>
                 {props.usersComments.map((com) => (
+                  // eslint-disable-next-line jsx-a11y/anchor-is-valid
                   <a style={{ display: "block" }} key={com.id}>
                     {com.commentAuthor.toUpperCase()}: {com.comment}
                   </a>

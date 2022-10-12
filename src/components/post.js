@@ -6,12 +6,9 @@ import { Button } from "@mui/material";
 import { useLoginContext } from "../Context/AuthContext";
 import { usePostContext } from "../Context/PostsContext";
 
-
 export default function Posts() {
-  
-  const {handleSignOut} = useLoginContext();
+  const { handleSignOut } = useLoginContext();
   const { post } = usePostContext();
-
 
   return (
     <>

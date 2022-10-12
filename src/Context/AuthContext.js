@@ -1,33 +1,53 @@
-import axios from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 import base64 from "base-64";
 import cookies from "react-cookies";
+import {
+  getUserProfile,
+  login,
+  logoutHandler,
+  signupAction,
+} from "../actions/AuthActions";
+import { useReducer } from "react";
+import { AuthReducer } from "../reducers/AuthReducer";
+import { actionType } from "../types/AuthActionTypes";
 
 const LoginContext = createContext();
 
 export const useLoginContext = () => useContext(LoginContext);
 
 const LoginContextProvider = (props) => {
-  // User authentication check
-  const [role, setRole] = useState("user");
-  let [isAuthorized, setIsAuthorized] = useState(false);
-  const [user, setUser] = useState({});
-  const [capabilities, setCapabilities] = useState();
-
-  const checkIfAuthorized = (bool) => {
-    setIsAuthorized(bool);
+  const token = cookies.load("token") ? cookies.load("token") : "";
+  const userInfo = cookies.load("userInfo") ? cookies.load("userInfo") : {};
+  const capabilities = cookies.load("capabilities");
+  const initialState = {
+    userInfo: userInfo,
+    role: "user",
+    isAuthorized: token ? true : false,
+    capabilities: capabilities,
+    notAuthed: false,
+    token: token,
+    alreadyExist: false,
+    notFilled: false,
+    NotMatched: false,
+    notFilledSignIn: false,
+    isValid: false,
+    message: "",
+    passwordType: "password",
+    passwordTypeSignIn: "password",
+    contactAdmin: false,
   };
+
+  const [user, dispatch] = useReducer(AuthReducer, initialState);
 
   const handleLogIn = (e) => {
     e.preventDefault();
     const filledData = new FormData(e.currentTarget);
-    setNotAuthed(false);
-    setNotFilledSignIn(false);
+    dispatch({ type: actionType.NOT_FILLED_RESET_LOGIN });
     if (!filledData.get("email") || !filledData.get("password")) {
-      setNotFilledSignIn(true);
+      dispatch({ type: actionType.NOT_FILLED_LOGIN });
       return;
     }
-    setNotFilledSignIn(false);
+    dispatch({ type: actionType.NOT_FILLED_RESET_LOGIN });
 
     const data = {
       username: filledData.get("email"),
@@ -36,82 +56,47 @@ const LoginContextProvider = (props) => {
     const encodedCredintial = base64.encode(
       `${data.username}:${data.password}`
     );
-    axios
-      .post(
-        `${process.env.REACT_APP_BACKEND}/signin`,
-        {},
-        {
-          headers: {
-            Authorization: `Basic ${encodedCredintial}`,
-          },
-        }
-      )
-      .then((res) => {
-        setUser(res.data);
-        console.log(res.data);
-        setCapabilities(res.data.capabilities);
-        cookies.save("token", res.data.token);
-        cookies.save("capabilities", JSON.stringify(res.data.capabilities));
-        checkIfAuthorized(true);
-      })
-      .catch((err) => setNotAuthed(true));
+    login(dispatch, encodedCredintial);
   };
 
   const handleSignOut = () => {
-    setUser({});
-    setCapabilities();
-    cookies.remove("token");
-    cookies.remove("capabilities");
-    checkIfAuthorized(false);
+    logoutHandler(dispatch);
   };
 
   // forms validation check
-  const [passwordType, setPasswordType] = useState("password");
-  const [passwordTypeSignIn, setPasswordTypeSignIn] = useState("password");
-
-  const [notFilled, setNotFilled] = useState(false);
-  const [notFilledSignIn, setNotFilledSignIn] = useState(false);
-
-  const [notAuthed, setNotAuthed] = useState(false);
-  const [contactAdmin, setContactAdmin] = useState(false);
-
-  const [NotMatched, setNotMatched] = useState(false);
-  const [alreadyExist, setAlreadyExist] = useState(false);
-
-  const [isValid, setIsValid] = useState(false);
-  const [message, setMessage] = useState("");
 
   const togglePassword = () => {
-    if (passwordType === "password") {
-      setPasswordType("text");
+    if (user.passwordType === "password") {
+      dispatch({ type: actionType.SIGN_SHOW_PASSWORD });
       return;
     }
-    setPasswordType("password");
+    dispatch({ type: actionType.SIGN_HIDE_PASSWORD });
   };
 
   const togglePasswordSignIn = () => {
-    if (passwordTypeSignIn === "password") {
-      setPasswordTypeSignIn("text");
+    if (user.passwordTypeSignIn === "password") {
+      dispatch({ type: actionType.LOG_SHOW_PASSWORD });
       return;
     }
-    setPasswordTypeSignIn("password");
+    dispatch({ type: actionType.LOG_HIDE_PASSWORD });
   };
 
   const handleForgetPassword = () => {
-    return setContactAdmin(!contactAdmin);
+    return dispatch({ type: actionType.CONTACT_ADMIN });
   };
 
   // signup form validation
   const handleRoleChange = (event) => {
-    setRole(event.target.value);
+    dispatch({
+      type: actionType.HANDLE_ROLE_CHANGE,
+      payload: event.target.value,
+    });
   };
 
   const signUp = (e) => {
     e.preventDefault();
     const filledData = new FormData(e.currentTarget);
-    setNotFilled(false);
-    setAlreadyExist(false);
-    setNotMatched(false);
+    dispatch({ type: actionType.RESET_SIGNUP });
 
     if (
       !filledData.get("email") ||
@@ -119,34 +104,26 @@ const LoginContextProvider = (props) => {
       !filledData.get("confirmPassword") ||
       !filledData.get("username")
     ) {
-      setNotFilled(true);
+      dispatch({ type: actionType.NOT_FILLED_SIGNUP });
       return;
     }
-    setNotFilled(false);
-    if (filledData.get("password") !== filledData.get("confirmPassword")) {
-      return setNotMatched(true);
-    }
-    setNotMatched(false);
+    dispatch({ type: actionType.RESET_SIGNUP });
 
-    if (isValid) {
+    if (filledData.get("password") !== filledData.get("confirmPassword")) {
+      dispatch({ type: actionType.NOT_MATCHED_SIGNUP });
+      return;
+    }
+    dispatch({ type: actionType.RESET_SIGNUP });
+
+    if (user.isValid) {
       const data = {
         username: filledData.get("username"),
         email: filledData.get("email"),
         password: filledData.get("password"),
-        role: role,
+        role: user.role,
       };
       console.log(data);
-      axios
-        .post(`${process.env.REACT_APP_BACKEND}/signup`, data)
-        .then((res) => {
-          console.log(res.data.user);
-          setUser(res.data);
-          setCapabilities(res.data.capabilities);
-          cookies.save("token", res.data.token);
-          cookies.save("capabilities", JSON.stringify(res.data.capabilities));
-          checkIfAuthorized(true);
-        })
-        .catch((e) => setAlreadyExist(true));
+      signupAction(dispatch, data);
     }
   };
 
@@ -155,71 +132,52 @@ const LoginContextProvider = (props) => {
   const validateEmail = (event) => {
     const email = event.target.value;
     if (emailRegex.test(email)) {
-      setIsValid(true);
-      setMessage("Your email looks good!");
+      dispatch({ type: actionType.SIGNUP_VALID });
     } else {
-      setIsValid(false);
-      setMessage("Please enter a valid email!");
+      dispatch({ type: actionType.SIGNUP_INVALID });
     }
-  };
-
-  const getUserProfile = async () => {
-    console.log("getting user profile");
-
-    await axios
-      .get(`${process.env.REACT_APP_BACKEND}/profile`, {
-        headers: {
-          Authorization: `Bearer ${cookies.load("token")}`,
-        },
-      })
-      .then((res) => {
-        console.log("done getting user info");
-        setUser(res.data);
-      });
   };
 
   const checkToken = async () => {
     const token = cookies.load("token");
     if (token) {
-      setIsAuthorized(true);
-      setCapabilities(cookies.load("capabilities"));
-      getUserProfile();
+      console.log("token is here");
+      getUserProfile(dispatch);
     }
   };
 
   const canDo = (PostOwner, LoggedUser) => {
-    if (PostOwner === LoggedUser || capabilities.includes("update")) {
+    if (PostOwner === LoggedUser || userInfo.capabilities.includes("update")) {
       return true;
     }
     return false;
-    };
+  };
 
   const value = {
-    notFilled,
-    notAuthed,
+    notFilled: user.notFilled,
+    notAuthed: user.notAuthed,
     togglePassword,
     handleForgetPassword,
     handleLogIn,
-    contactAdmin,
-    passwordType,
-    isAuthorized,
-    checkIfAuthorized,
+    contactAdmin: user.contactAdmin,
+    passwordType: user.passwordType,
+    isAuthorized: user.isAuthorized,
     handleSignOut,
-    NotMatched,
-    alreadyExist,
-    isValid,
-    message,
-    role,
+    NotMatched: user.NotMatched,
+    alreadyExist: user.alreadyExist,
+    isValid: user.isValid,
+    message: user.message,
+    role: user.role,
     handleRoleChange,
     signUp,
     validateEmail,
     togglePasswordSignIn,
-    passwordTypeSignIn,
-    notFilledSignIn,
-    user,
-    capabilities,
+    passwordTypeSignIn: user.passwordTypeSignIn,
+    notFilledSignIn: user.notFilledSignIn,
+    user: user.userInfo,
+    capabilities: user.capabilities,
     checkToken,
-    canDo
+    canDo,
   };
   return (
     <LoginContext.Provider value={value}>

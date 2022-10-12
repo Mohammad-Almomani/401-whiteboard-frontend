@@ -7,7 +7,7 @@ import { useLoginContext } from "../Context/AuthContext";
 import { usePostContext } from "../Context/PostsContext";
 
 export default function AddCommentForm(props) {
-  const {  user } = useLoginContext();
+  const { user } = useLoginContext();
   const { gitPosts } = usePostContext();
 
   const addComment = async (e) => {
@@ -16,7 +16,7 @@ export default function AddCommentForm(props) {
       comment: e.target.content.value,
       postID: props.postID,
       userID: user.id,
-      commentAuthor: user.username
+      commentAuthor: user.username,
     };
     try {
       const qq = await axios.post(
@@ -34,13 +34,7 @@ export default function AddCommentForm(props) {
   return (
     <div>
       <Form onSubmit={addComment} style={{ margin: "10px 50px" }}>
-        {/* <Form.Group className="mb-3">
-        <Form.Label>you Name</Form.Label>
-        <Form.Control id="commentAuthor" type="text" placeholder="Optional" />   
-     
-    </Form.Group> */}
         <Form.Group className="mb-3">
-          {/* <Form.Label>Type here</Form.Label> */}
           <TextField
             margin="normal"
             fullWidth
